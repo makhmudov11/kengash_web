@@ -1,6 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView, CreateAPIView
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAdminUser
 
@@ -48,16 +48,11 @@ class EmployeeListAPIView(ListAPIView):
         return queryset
 
 
-class EmployeeListCreateAPIView(ListCreateAPIView):
-    serializer_class = EmployeeListSerializer
+class EmployeeCreateAPIView(CreateAPIView):
     permission_classes = [IsAdminUser]
     queryset = Employee.objects.all()
     parser_classes = [FormParser, MultiPartParser]
-
-    def get_serializer_class(self):
-        if self.request.method == 'POST':
-            return EmployeeCreateSerializer
-        return EmployeeListSerializer
+    serializer_class = EmployeeCreateSerializer
 
 
 class EmployeeRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
