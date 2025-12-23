@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 
 from apps.users.serializers import LoginSerializer
+from apps.utils.token_claim import get_tokens_for_user
 
 
 class LoginAPIView(APIView):
@@ -29,8 +30,9 @@ class LoginAPIView(APIView):
                 "success": True,
                 "message": "Login successful"
             })
+        token = get_tokens_for_user(user)
 
         return Response(
-            {"success": False, "message": "Username yoki password noto‘g‘ri"},
+            data=token,
             status=status.HTTP_401_UNAUTHORIZED
         )
