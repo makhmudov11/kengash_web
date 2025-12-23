@@ -1,3 +1,4 @@
+import decouple
 import requests
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -76,9 +77,14 @@ class EmployeeGetAPIView(APIView):
         if not hemis_id:
             return Response({"success": False, "error": "hemis_id required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        headers = {
+            "Authorization": f"Bearer {decouple.config('HEMIS_TOKEN')}",
+            "Accept": "application/json",
+        }
+
         url = f'https://student.tashmeduni.uz/rest/v1/data/employee-list?type=all&search={hemis_id}'
         try:
-            response = requests.get(url)
+            response = requests.get(url, headers=headers)
             response.raise_for_status()
         except requests.RequestException as e:
             return Response({"success": False, "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -93,11 +99,14 @@ class EmployeeGetAPIView(APIView):
 
 
         emp = items[0]
-        result = {
-            "full_name": emp.get("full_name"),
-            "department": emp.get("department", {}).get("name"),
-            "specialty": emp.get("specialty"),
-            "image": emp.get("image") or emp.get("image_full")
-        }
 
-        return Response({"success": True, "data": result}, status=status.HTTP_200_OK)
+        user = Employee.objects.create(
+            full_name=emp.get("full_name", ''),
+            department=emp.get("department", {}).get("name"),
+            lavozim=emp.get("specialty"),
+            image=emp.get("image") or emp.get("image_full")
+        )
+
+        return Response({"success": True, "data": EmployeeListSerializer(user).data}, status=status.HTTP_200_OK)
+
+
