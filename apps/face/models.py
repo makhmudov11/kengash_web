@@ -31,8 +31,6 @@ class FaceLogChoice(models.TextChoices):
 
 class FaceLog(CreateUpdateBaseModel):
 
-    recognized = "recognized", "Tanishdi"
-    not_found = "not_found", "Topilmadi"
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True, blank=True,
                                  related_name='facelogs')
     status = models.CharField(max_length=20, choices=FaceLogChoice.choices, default="recognized")

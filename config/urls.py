@@ -19,13 +19,13 @@ from django.contrib import admin
 from django.urls import path, include
 
 from config import settings
-from apps.utils.swagger.swagger_urls import SPECTACULAR_URL
+from apps.swagger.swagger_urls import SPECTACULAR_URL
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('login/', include('apps.users.urls', namespace='users')),
     path('face/', include('apps.face.urls', namespace='face')),
-    path('employee/', include('apps.employee.urls', namespace='employee')),
-    path('users/', include('apps.users.urls', namespace='users')),
+    path('employee/', include('apps.employee.urls', namespace='employee'))
 
 ]+ SPECTACULAR_URL
 

@@ -33,6 +33,7 @@ CUSTOM_APP = [
     'apps.employee',
     'apps.face',
     'apps.users',
+    "apps.utils",
 ]
 
 CUSTOM_INSTALLED_APP = [
@@ -138,7 +139,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = []
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
-AUTH_USER_MODEL = 'users.CustomUser'
+
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
