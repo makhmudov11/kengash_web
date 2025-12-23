@@ -17,6 +17,26 @@ from apps.bot.models import TelegramUser
 User = get_user_model()
 
 
+
+class BulletinGroupCreateAPIView(CreateAPIView):
+    serializer_class = BulletinGroupCreateSerializer
+    permission_classes = [IsAdminUser]
+    queryset = BulletinGroup.objects.all()
+
+
+class BulletinGroupDetailAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = BulletinGroupDetailSerializer
+    permission_classes = [IsAdminUser]
+    queryset = BulletinGroup.objects.all()
+
+
+class BulletinGroupListAPIView(ListAPIView):
+    serializer_class = BulletinGroupListSerializer
+    permission_classes = [IsAdminUser]
+    queryset = BulletinGroup.objects.all()
+
+
+
 # 🔹 Bulletin ro'yxati (barchaga ochiq)
 class BulletinListView(generics.ListAPIView):
     """Faol byulletenlar ro‘yxati"""
@@ -85,37 +105,8 @@ class BulletinResultView(APIView):
         return Response(data)
 
 
-class BulletinViewSet(viewsets.ModelViewSet):
-    queryset = Bulletin.objects.all().order_by('-created_at')
-    serializer_class = BulletinSerializer
-    permission_classes = [IsAuthenticated]
-
-    # 🔹 status toggle uchun custom action
-    @action(detail=True, methods=['patch'])
-    def toggle_status(self, request, pk=None):
-        bulletin = self.get_object()
-        bulletin.status = not bulletin.status  # True <-> False
-        bulletin.save()
-        serializer = self.get_serializer(bulletin)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class BulletinGroupCreateAPIView(CreateAPIView):
-    serializer_class = BulletinGroupCreateSerializer
-    permission_classes = [IsAdminUser]
-    queryset = BulletinGroup.objects.all()
-
-
-class BulletinGroupDetailAPIView(RetrieveUpdateDestroyAPIView):
-    serializer_class = BulletinGroupDetailSerializer
-    permission_classes = [IsAdminUser]
-    queryset = BulletinGroup.objects.all()
-
-
-class BulletinGroupListAPIView(ListAPIView):
-    serializer_class = BulletinGroupListSerializer
-    permission_classes = [IsAdminUser]
-    queryset = BulletinGroup.objects.all()
 
 
 from django.shortcuts import render
