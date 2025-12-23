@@ -25,7 +25,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', include('apps.users.urls', namespace='users')),
     path('face/', include('apps.face.urls', namespace='face')),
-    path('employee/', include('apps.employee.urls', namespace='employee'))
+    path('employee/', include('apps.employee.urls', namespace='employee')),
+    path('bulletin/', include('apps.bulletin.urls', namespace='bulletin'))
 
 ]+ SPECTACULAR_URL
 

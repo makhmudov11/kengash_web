@@ -6,13 +6,13 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.decorators import action
 
-from .models import Bulletin, BulletinGroup
+from apps.bulletin.models import Bulletin, BulletinGroup
 from .serializers import BulletinSerializer, BulletinVoteSerializer, BulletinGroupCreateSerializer, \
     BulletinGroupDetailSerializer, BulletinGroupListSerializer
 
 from django.contrib.auth import get_user_model
 
-from bot.models import TelegramUser
+from apps.bot.models import TelegramUser
 
 User = get_user_model()
 

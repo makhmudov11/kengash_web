@@ -35,6 +35,8 @@ CUSTOM_APP = [
     'apps.face',
     'apps.users',
     "apps.utils",
+    'apps.bot',
+    'apps.bulletin',
 ]
 
 CUSTOM_INSTALLED_APP = [
