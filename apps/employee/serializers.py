@@ -32,3 +32,7 @@ class EmployeeDetailGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
         fields = '__all__'
+
+
+class EmployeeGetSerializer(serializers.Serializer):
+    hemis_id = serializers.CharField(max_length=50, required=True)
