@@ -19,7 +19,7 @@ class Employee(CreateUpdateBaseModel):
     full_name = models.CharField(max_length=255, db_index=True, null=True)
     department = models.CharField(max_length=255, db_index=True, null=True)
     lavozim = models.CharField(max_length=255, db_index=True, null=True)
-    image = models.ImageField(upload_to='employee_faces/', null=True)
+    image = models.FileField(upload_to='employee_faces/', null=True)
     face_encoding = models.JSONField(null=True, blank=True)
 
     phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)  # +998...

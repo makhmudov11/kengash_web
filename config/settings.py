@@ -43,6 +43,7 @@ CUSTOM_INSTALLED_APP = [
     'django_filters',
     'rest_framework',
     'drf_spectacular',
+    'corsheaders',
 ]
 
 INSTALLED_APPS = [
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
                  ] + CUSTOM_APP + CUSTOM_INSTALLED_APP
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware'
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
