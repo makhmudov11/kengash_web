@@ -26,13 +26,13 @@ class LoginAPIView(APIView):
         user = authenticate(username=username, password=password)
 
         if user is not None:
+            token = get_tokens_for_user(user)
             return Response({
                 "success": True,
-                "message": "Login successful"
+                "message": "Login successful",
+                "token" : token
             })
-        token = get_tokens_for_user(user)
 
         return Response(
-            data=token,
             status=status.HTTP_401_UNAUTHORIZED
         )

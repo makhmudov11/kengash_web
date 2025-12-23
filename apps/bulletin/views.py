@@ -1,0 +1,123 @@
+from django.shortcuts import get_object_or_404
+from rest_framework import generics, permissions, viewsets, status, serializers
+from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.decorators import action
+
+from .models import Bulletin, BulletinGroup
+from .serializers import BulletinSerializer, BulletinVoteSerializer, BulletinGroupCreateSerializer, \
+    BulletinGroupDetailSerializer, BulletinGroupListSerializer
+
+from django.contrib.auth import get_user_model
+
+from bot.models import TelegramUser
+
+User = get_user_model()
+
+
+# 🔹 Bulletin ro'yxati (barchaga ochiq)
+class BulletinListView(generics.ListAPIView):
+    """Faol byulletenlar ro‘yxati"""
+    queryset = Bulletin.objects.order_by("-created_at")
+    serializer_class = BulletinSerializer
+    permission_classes = [permissions.IsAuthenticated]  # ✅ hamma ko‘ra oladi
+
+
+# 🔹 Faqat adminlar yaratadi
+class BulletinCreateView(generics.CreateAPIView):
+    queryset = Bulletin.objects.all()
+    serializer_class = BulletinSerializer
+    permission_classes = [permissions.IsAuthenticated]  # faqat login foydalanuvchi
+
+    def perform_create(self, serializer):
+        # Yaratuvchi foydalanuvchi avtomatik saqlanadi
+        serializer.save(created_by=self.request.user)
+
+
+# views.py
+class BulletinVoteCreateView(generics.CreateAPIView):
+    serializer_class = BulletinVoteSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def perform_create(self, serializer):
+        telegram_id = serializer.validated_data.pop('telegram_id')
+        # bulletin = serializer.validated_data['bulletin']
+
+        tg_user = get_object_or_404(TelegramUser, telegram_id=telegram_id)
+
+        if not tg_user.is_verified:
+            raise serializers.ValidationError("Kontakt bazadan topilmadi!")
+
+        if not tg_user.employee:
+            raise serializers.ValidationError("Foydalanuvchi bog'lanmagan.")
+
+        serializer.save(telegram_user=tg_user)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+# 🔹 Byulleten natijalari (barchaga ochiq)
+class BulletinResultView(APIView):
+    """Bitta byulleten bo‘yicha natijalarni olish"""
+    permission_classes = [permissions.AllowAny]  # ✅ hamma ko‘ra oladi
+
+    def get(self, request, pk):
+        try:
+            bulletin = Bulletin.objects.get(pk=pk)
+        except Bulletin.DoesNotExist:
+            return Response({"detail": "Byulleten topilmadi."}, status=404)
+
+        data = {
+            "id": bulletin.id,
+            "full_name": bulletin.full_name,
+            "specialization": bulletin.specialization,
+            "title": bulletin.title,
+            "agree_count": bulletin.agree_count,
+            "disagree_count": bulletin.disagree_count,
+        }
+        return Response(data)
+
+
+class BulletinViewSet(viewsets.ModelViewSet):
+    queryset = Bulletin.objects.all().order_by('-created_at')
+    serializer_class = BulletinSerializer
+    permission_classes = [IsAuthenticated]
+
+    # 🔹 status toggle uchun custom action
+    @action(detail=True, methods=['patch'])
+    def toggle_status(self, request, pk=None):
+        bulletin = self.get_object()
+        bulletin.status = not bulletin.status  # True <-> False
+        bulletin.save()
+        serializer = self.get_serializer(bulletin)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class BulletinGroupCreateAPIView(CreateAPIView):
+    serializer_class = BulletinGroupCreateSerializer
+    permission_classes = [IsAdminUser]
+    queryset = BulletinGroup.objects.all()
+
+
+class BulletinGroupDetailAPIView(RetrieveUpdateDestroyAPIView):
+    serializer_class = BulletinGroupDetailSerializer
+    permission_classes = [IsAdminUser]
+    queryset = BulletinGroup.objects.all()
+
+
+class BulletinGroupListAPIView(ListAPIView):
+    serializer_class = BulletinGroupListSerializer
+    permission_classes = [IsAdminUser]
+    queryset = BulletinGroup.objects.all()
+
+
+from django.shortcuts import render
+
+# Create your views here.
