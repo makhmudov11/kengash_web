@@ -15,7 +15,6 @@ class BulletinSerializer(serializers.ModelSerializer):
             "full_name",
             "specialization",
             "title",
-            "status",
             "agree_count",
             "disagree_count",
             "created_at",

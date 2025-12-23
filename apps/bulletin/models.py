@@ -3,6 +3,7 @@ from django.db import models
 from rest_framework.exceptions import ValidationError
 
 from apps.bot.models import TelegramUser
+from apps.utils.base_models import CreateUpdateBaseModel
 
 
 class BulletinGroup(models.Model):
@@ -19,13 +20,12 @@ class BulletinGroup(models.Model):
             raise ValidationError(f'{self.name} nomli guruh avval yratilgan')
 
 
-class Bulletin(models.Model):
+class Bulletin(CreateUpdateBaseModel):
     bulletin_group = models.ForeignKey(BulletinGroup, on_delete=models.CASCADE,
                                        related_name='bulletins')
     full_name = models.CharField(max_length=255)
     specialization = models.CharField(max_length=255, null=True, blank=True)
     title = models.CharField(max_length=255, default="Professor")
-    created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
@@ -45,7 +45,7 @@ class VoteChoices(models.TextChoices):
     disagree = 'disagree', 'Disagree'
 
 
-class BulletinVote(models.Model):
+class BulletinVote(CreateUpdateBaseModel):
     bulletin = models.ForeignKey(Bulletin, on_delete=models.CASCADE, related_name='votes')
 
     telegram_user = models.ForeignKey(
