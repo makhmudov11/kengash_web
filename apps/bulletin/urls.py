@@ -21,6 +21,6 @@ urlpatterns = [
     path('bulletin-group/detail/<int:pk>', BulletinGroupDetailAPIView.as_view(), name='bulletin-group-detail'),
     path('bulletin-group/list', BulletinGroupListAPIView.as_view(), name='bulletin-group-list'),
 
-    path('', include(router.urls)),
+
 
 ]
