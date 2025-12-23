@@ -71,8 +71,8 @@ class EmployeeGetAPIView(APIView):
     kerakli maydonlarni qaytarish: full_name, department, specialty, image_full
     """
 
-    def get(self, request):
-        hemis_id = request.query_params.get('hemis_id')  # GET parametri sifatida olish
+    def post(self, request):
+        hemis_id = request.data.get('hemis_id')  # GET parametri sifatida olish
         if not hemis_id:
             return Response({"success": False, "error": "hemis_id required"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -97,7 +97,7 @@ class EmployeeGetAPIView(APIView):
             "full_name": emp.get("full_name"),
             "department": emp.get("department", {}).get("name"),
             "specialty": emp.get("specialty"),
-            "image": emp.get("image") or emp.get("image")
+            "image": emp.get("image") or emp.get("image_full")
         }
 
         return Response({"success": True, "data": result}, status=status.HTTP_200_OK)
