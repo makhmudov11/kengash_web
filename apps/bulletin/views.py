@@ -3,7 +3,7 @@ from rest_framework import generics, permissions, viewsets, status, serializers
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.decorators import action
 
 from apps.bulletin.models import Bulletin, BulletinGroup
@@ -20,7 +20,7 @@ User = get_user_model()
 
 class BulletinGroupCreateAPIView(CreateAPIView):
     serializer_class = BulletinGroupCreateSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
     queryset = BulletinGroup.objects.all()
 
 

@@ -62,13 +62,17 @@ from rest_framework.response import Response
 from rest_framework import status
 import requests
 
+
 class EmployeeGetAPIView(APIView):
+    serializer_class = EmployeeGetSerializer
+
     """
     Hemis API orqali xodimni hemis_id bo'yicha olish va faqat
     kerakli maydonlarni qaytarish: full_name, department, specialty, image_full
     """
+
     def get(self, request):
-        hemis_id = request.query_params.get('hemis_id')  # GET parametri sifatida olish
+        hemis_id = request.data.get('hemis_id')  # GET parametri sifatida olish
         if not hemis_id:
             return Response({"success": False, "error": "hemis_id required"}, status=status.HTTP_400_BAD_REQUEST)
 
