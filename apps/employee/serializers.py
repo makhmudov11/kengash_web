@@ -35,4 +35,4 @@ class EmployeeDetailGetSerializer(serializers.ModelSerializer):
 
 
 class EmployeeGetSerializer(serializers.Serializer):
-    hemis_id = serializers.CharField(max_length=50, required=True)
+    hemis_id = serializers.CharField(max_length=50, required=False)

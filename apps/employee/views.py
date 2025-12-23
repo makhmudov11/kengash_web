@@ -72,7 +72,7 @@ class EmployeeGetAPIView(APIView):
     """
 
     def get(self, request):
-        hemis_id = request.data.get('hemis_id')  # GET parametri sifatida olish
+        hemis_id = request.query_params.get('hemis_id')  # GET parametri sifatida olish
         if not hemis_id:
             return Response({"success": False, "error": "hemis_id required"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -91,13 +91,13 @@ class EmployeeGetAPIView(APIView):
         if not items:
             return Response({"success": False, "error": "Employee not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Kerakli maydonlarni ajratib olish (faqat birinchi element)
+
         emp = items[0]
         result = {
             "full_name": emp.get("full_name"),
             "department": emp.get("department", {}).get("name"),
             "specialty": emp.get("specialty"),
-            "image": emp.get("image_full") or emp.get("image")
+            "image": emp.get("image") or emp.get("image")
         }
 
         return Response({"success": True, "data": result}, status=status.HTTP_200_OK)
