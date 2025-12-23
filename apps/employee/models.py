@@ -5,7 +5,7 @@ import requests
 from django.db import models
 from requests.auth import HTTPDigestAuth
 
-from apps.utils.BaseModel import CreateUpdateBaseModel
+from apps.utils.base_models import CreateUpdateBaseModel
 
 HIK_USER= decouple.config('HIK_USER')
 HIK_PASS= decouple.config('HIK_PASS')

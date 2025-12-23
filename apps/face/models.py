@@ -4,8 +4,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 from apps.employee.models import Employee
-from apps.utils.BaseModel import CreateUpdateBaseModel
-
+from apps.utils.base_models import CreateUpdateBaseModel
 
 
 class AttendanceChoice(models.TextChoices):

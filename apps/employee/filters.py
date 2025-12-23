@@ -1,6 +1,6 @@
 import django_filters
 
-from apps.utils.BaseModel import CreateUpdateBaseModel
+from apps.utils.base_models import CreateUpdateBaseModel
 
 
 class AdminEmployeeListFilter(django_filters.FilterSet):
