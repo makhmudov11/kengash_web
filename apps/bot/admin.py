@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import TelegramUser
+from ..bulletin.models import Bulletin, BulletinVote, BulletinGroup
 
 
 @admin.register(TelegramUser)
@@ -33,7 +34,7 @@ from django.urls import reverse, path
 from django.utils.html import format_html
 
 from bot import send_bulletin_to_group
-from apps.vote.models import Bulletin, BulletinVote, BulletinGroup
+
 
 
 @admin.register(Bulletin)
