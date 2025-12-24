@@ -11,7 +11,7 @@ from telegram.ext import (
 )
 
 import config.settings
-from apps.bot.callback_handler import vote_save_handler
+from apps.bot.callback_handler import vote_save_handler, noop_handler
 from apps.bot.keyboards import send_voting_keyboard, get_contact_keyboard
 from apps.bot.queries import get_user
 from apps.bulletin.models import BulletinGroup
@@ -19,6 +19,7 @@ from apps.bulletin.models import BulletinGroup
 BOT_TOKEN = decouple.config('BOT_TOKEN')
 BOT_USERNAME = decouple.config('BOT_USERNAME')
 GROUP_CHAT_ID = decouple.config('GROUP_CHAT_ID')
+
 
 _bot_thread = None
 _bot_lock = threading.Lock()

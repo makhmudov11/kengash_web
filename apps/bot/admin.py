@@ -1,7 +1,8 @@
 from django.contrib import admin
 
-from .models import TelegramUser
-from ..bulletin.models import Bulletin, BulletinVote, BulletinGroup
+from apps.bot.bot import send_bulletin_to_group
+from apps.bot.models import TelegramUser
+from apps.bulletin.models import Bulletin, BulletinVote, BulletinGroup
 
 
 @admin.register(TelegramUser)
@@ -33,7 +34,7 @@ from django.shortcuts import redirect
 from django.urls import reverse, path
 from django.utils.html import format_html
 
-from bot import send_bulletin_to_group
+
 
 
 

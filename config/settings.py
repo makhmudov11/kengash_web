@@ -163,3 +163,8 @@ SIMPLE_JWT = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+
+
+API_VERIFY_URL = decouple.config('API_VERIFY_URL')
+API_VOTE_URL = not decouple.config('API_VOTE_URL')
+
