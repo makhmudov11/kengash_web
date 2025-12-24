@@ -27,14 +27,31 @@ class BulletinGroupSerializer(serializers.ModelSerializer):
         return group
 
 
-class BulletinLIstSerializer(serializers.ModelSerializer):
-    bulletin_group = BulletinGroupSerializer()
 
-    def get_attendance_agree(self, obj):
+class BulletinListSerializer(serializers.ModelSerializer):
+    bulletin_group = BulletinGroupSerializer()
+    agree_count = serializers.SerializerMethodField()
+    disagree_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Bulletin
-        fields = ['id', 'full_name', 'bulletin_group', 'specialization', 'title']
+        fields = [
+            'id',
+            'full_name',
+            'bulletin_group',
+            'specialization',
+            'title',
+            'agree_count',
+            'disagree_count'
+        ]
+
+    # 'agree' ovozlar soni
+    def get_agree_count(self, obj):
+        return obj.agree_count
+
+    # 'disagree' ovozlar soni
+    def get_disagree_count(self, obj):
+        return obj.disagree_count
 
 # from rest_framework import serializers
 #
