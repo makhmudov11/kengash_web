@@ -1,6 +1,6 @@
 from django.urls import path
 
-from bot.views import publish_bulletin, VerifyContactView
+from apps.bot.views import VerifyContactView, publish_bulletin
 
 urlpatterns = [
     path('bulletins/<int:bulletin_id>/publish/', publish_bulletin, name='publish_bulletin'),

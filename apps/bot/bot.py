@@ -102,6 +102,8 @@ def send_bulletin_to_group(bulletin_group: BulletinGroup):
         return {"detail": "Byulleten allaqachon faollashtirilgan!"}
 
     url = f"https://t.me/{BOT_USERNAME}?start=vote_{bulletin_group.id}"
+    print(BOT_USERNAME)
+    print(bulletin_group.pk)
     keyboard = [[InlineKeyboardButton("Ovoz berish", url=url)]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     text = f"{bulletin_group.name}\nOvoz berish uchun tugmani bosing."
@@ -129,12 +131,10 @@ def send_bulletin_to_group(bulletin_group: BulletinGroup):
     thread.start()
     return {"detail": "Yuborish boshlandi..."}
 
-
-# ------------------ Bot Runner (Singleton) ------------------
 def run_bot():
     global _bot_thread
     with _bot_lock:
-        if _bot_thread is not None and _bot_thread.is_alive():
+        if _bot_thread and _bot_thread.is_alive():
             print("Bot allaqachon ishlamoqda.")
             return
 
@@ -143,36 +143,21 @@ def run_bot():
         def _start_bot():
             app = ApplicationBuilder().token(BOT_TOKEN).build()
 
-            # HANDLERLAR
+            # Handlerlar
             app.add_handler(CommandHandler("start", start))
-            app.add_handler(MessageHandler(filters.CONTACT, handle_contact))  # MUHIM!
-            app.add_handler(CallbackQueryHandler(vote_save_handler))  # Bitta!
+            app.add_handler(MessageHandler(filters.CONTACT, handle_contact))
+            app.add_handler(CallbackQueryHandler(vote_save_handler))
             app.add_handler(CallbackQueryHandler(noop_handler, pattern="^noop$"))
 
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-
+            # Shu yerda hamma ishni ichida bajaradi
             try:
-                loop.run_until_complete(app.initialize())
-                loop.run_until_complete(app.start())
-                loop.run_until_complete(
-                    app.updater.start_polling(
-                        drop_pending_updates=True,
-                        allowed_updates=Update.ALL_TYPES
-                    )
+                app.run_polling(
+                    drop_pending_updates=True,
+                    allowed_updates=Update.ALL_TYPES
                 )
-                print("Bot polling boshlandi. Ishlayapti...")
-                loop.run_forever()
             except Exception as e:
                 print(f"Bot xatosi: {e}")
-            finally:
-                try:
-                    loop.run_until_complete(app.updater.stop())
-                    loop.run_until_complete(app.stop())
-                    loop.run_until_complete(app.shutdown())
-                except:
-                    pass
-                loop.close()
 
         _bot_thread = threading.Thread(target=_start_bot, daemon=True)
         _bot_thread.start()
+        print("Bot fon thread da ishga tushdi.")
