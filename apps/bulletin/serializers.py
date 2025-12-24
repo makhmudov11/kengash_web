@@ -53,6 +53,24 @@ class BulletinListSerializer(serializers.ModelSerializer):
     def get_disagree_count(self, obj):
         return obj.disagree_count
 
+
+
+
+class BulletinSendLinkSerializer(serializers.ModelSerializer):
+    bulletin_group = BulletinGroupSerializer()
+
+    class Meta:
+        model = Bulletin
+        fields = [
+            'id',
+            'full_name',
+            'bulletin_group',
+            'specialization',
+            'title'
+        ]
+
+
+
 # from rest_framework import serializers
 #
 # from apps.bulletin.models import Bulletin, BulletinVote, BulletinGroup

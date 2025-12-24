@@ -1,7 +1,7 @@
+from django.utils import timezone
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAdminUser
-from rest_framework.response import Response
-from rest_framework.views import APIView
+
 
 from apps.employee.models import Employee
 from apps.face.models import Attendance, AttendanceChoice
@@ -67,3 +67,25 @@ class EmployeeFaceAttendanceListAPIView(ListAPIView):
     serializer_class = EmployeeFaceAttendanceListSerializer
     permission_classes = [IsAdminUser]
     queryset = Attendance.objects.select_related('employee')
+
+class TodayAttendanceListAPIView(ListAPIView):
+    serializer_class = EmployeeFaceAttendanceListSerializer
+    permission_classes = [IsAdminUser]
+
+    def get_queryset(self):
+        today = timezone.now().date()
+
+        # 1️⃣ Bugungi attendance
+        today_qs = (Attendance.objects
+                    .filter(arrival_time__date=today)
+                    .order_by('employee', 'arrival_time')
+                    .distinct('employee'))
+
+        if today_qs.exists():
+            return today_qs
+
+        # 2️⃣ Agar bugungi attendance bo‘lmasa, oxirgi attendance
+        last_qs = (Attendance.objects
+                   .order_by('employee', '-arrival_time')
+                   .distinct('employee'))
+        return last_qs

@@ -1,6 +1,7 @@
 from django.db.models import Q
 
-from apps.bulletin.models import BulletinVote
+from apps.bot.models import TelegramUser
+from apps.bulletin.models import BulletinVote, BulletinGroup, Bulletin
 
 
 def get_user_vote_count_in_group(group_id: int, user_tg_id: int) -> int:

@@ -1,27 +1,11 @@
-# from django.shortcuts import get_object_or_404
-# from rest_framework import generics, permissions, viewsets, status, serializers
-# from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
-# from rest_framework.response import Response
-# from rest_framework.views import APIView
-# from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
-# from rest_framework.decorators import action
-#
-# from apps.bulletin.models import Bulletin, BulletinGroup
-# from .serializers import BulletinSerializer, BulletinVoteSerializer, BulletinGroupCreateSerializer, \
-#     BulletinGroupDetailSerializer, BulletinGroupListSerializer
-#
-# from django.contrib.auth import get_user_model
-#
-# from apps.bot.models import TelegramUser
-#
-# User = get_user_model()
-#
-from rest_framework import generics, permissions
+from django.http import Http404
 from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.response import Response
 
+from apps.bot.bot import send_bulletin_to_group
 from apps.bulletin.models import BulletinGroup, Bulletin
-from apps.bulletin.serializers import BulletinGroupSerializer, BulletinListSerializer
+from apps.bulletin.serializers import BulletinGroupSerializer, BulletinListSerializer, BulletinSendLinkSerializer
 
 
 class BulletinGroupCreateAPIView(CreateAPIView):
@@ -36,6 +20,29 @@ class BulletinListAPIView(ListAPIView):
     queryset = Bulletin.objects.all()
 
 
+class SendBulletinGroup(ListAPIView):
+    serializer_class = BulletinSendLinkSerializer
+    permission_classes = [IsAdminUser]
+
+    def get_queryset(self):
+        group_id = self.kwargs.get('group_id')
+        if not group_id:
+            raise Http404("Bulletin guruh id topilmadi")
+        return Bulletin.objects.filter(bulletin_group_id=group_id)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+
+        group_id = self.kwargs.get('group_id')
+        print("SLAOLSJAHKJSAFHKSABKGABKGHABIHBAIGHAB", group_id)
+        result = send_bulletin_to_group(group_id)  # Telegramga yuborish
+
+        data = {
+            "telegram_result": result,
+            "bulletins": serializer.data
+        }
+        return Response(data)
 #
 #
 # class BulletinGroupCreateAPIView(CreateAPIView):

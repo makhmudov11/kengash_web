@@ -7,4 +7,5 @@ app_name = 'bulletin'
 urlpatterns = [
     path('groups/create/', BulletinGroupCreateAPIView.as_view(), name='bulletin-group-create'),
     path('list/', BulletinListAPIView.as_view(), name='bulletin-list'),
+    path('group/send/<int:group_id>', BulletinListAPIView.as_view(), name='bulletin-list'),
 ]
