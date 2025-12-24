@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import BulletinGroupCreateAPIView, BulletinListAPIView
+
+from apps.bulletin.views import BulletinGroupCreateAPIView, BulletinListAPIView
 
 app_name = 'bulletin'
 
