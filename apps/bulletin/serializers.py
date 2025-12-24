@@ -26,6 +26,13 @@ class BulletinGroupSerializer(serializers.ModelSerializer):
             Bulletin.objects.create(bulletin_group=group, **bulletin_data)
         return group
 
+
+class BulletinLIstSerializer(serializers.ModelSerializer):
+    bulletin_group = BulletinGroupSerializer()
+    class Meta:
+        model = Bulletin
+        fields = ['id', 'full_name', 'bulletin_group', 'specialization', 'title']
+
 # from rest_framework import serializers
 #
 # from apps.bulletin.models import Bulletin, BulletinVote, BulletinGroup

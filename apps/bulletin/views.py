@@ -17,11 +17,11 @@
 # User = get_user_model()
 #
 from rest_framework import generics, permissions
-from rest_framework.generics import CreateAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import CreateAPIView, ListAPIView
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
-from apps.bulletin.models import BulletinGroup
-from apps.bulletin.serializers import BulletinGroupSerializer
+from apps.bulletin.models import BulletinGroup, Bulletin
+from apps.bulletin.serializers import BulletinGroupSerializer, BulletinLIstSerializer
 
 
 class BulletinGroupCreateAPIView(CreateAPIView):
@@ -30,6 +30,10 @@ class BulletinGroupCreateAPIView(CreateAPIView):
     permission_classes = [IsAuthenticated]
 
 
+class BulletinListAPIView(ListAPIView):
+    permissions = [IsAdminUser]
+    serializer_class = BulletinLIstSerializer
+    queryset = Bulletin.objects.all()
 
 
 #
