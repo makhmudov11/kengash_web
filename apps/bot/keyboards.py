@@ -2,7 +2,7 @@ from asgiref.sync import sync_to_async
 from telegram import KeyboardButton, ReplyKeyboardMarkup, Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 
-from apps.bot.queries import bulletin_group_in_bulletin_count, get_user_vote_count_in_group, get_none_vote_bulletin, \
+from apps.bot.queries import get_none_vote_bulletin, get_user_vote_count_in_group, bulletin_group_in_bulletin_count, \
     get_user_full_name
 from apps.bulletin.models import BulletinGroup, VoteChoices
 

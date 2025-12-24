@@ -37,33 +37,16 @@ from django.utils.html import format_html
 
 
 
+class BulletinInline(admin.TabularInline):
+    model = Bulletin
+    extra = 1
 
-@admin.register(Bulletin)
-class BulletinAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'specialization', 'title', 'created_at', 'created_by', 'agree_count', 'disagree_count')
-    list_filter = ( 'title', 'created_at')
-    search_fields = ('full_name', 'specialization')
-    readonly_fields = ('created_at', 'agree_count', 'disagree_count')
-    date_hierarchy = 'created_at'
 
-    fieldsets = (
-        ('Asosiy ma\'lumotlar', {
-            'fields': ('full_name', 'specialization', 'title', 'status')
-        }),
-        ('Qo\'shimcha', {
-            'fields': ('created_by', 'created_at'),
-            'classes': ('collapse',),
-        }),
-        ('Statistika', {
-            'fields': ('agree_count', 'disagree_count'),
-            'classes': ('collapse',),
-        }),
-    )
+# @admin.register(BulletinGroup)
+# class BulletinGroupAdmin(admin.ModelAdmin):
+#     list_display = ('name', 'status', 'created_at')
+#     inlines = [BulletinInline]
 
-    def get_readonly_fields(self, request, obj=None):
-        if obj:  # Edit qilganda
-            return self.readonly_fields + ('created_by',)
-        return self.readonly_fields
 
 
 @admin.register(BulletinVote)
@@ -90,22 +73,37 @@ class BulletinGroupAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
-            path('send/<int:group_id>/', self.admin_site.admin_view(self._send_to_telegram), name='send_to_telegram'),
+            path(
+                'send/<int:group_id>/',
+                self.admin_site.admin_view(self._send_to_telegram),
+                name='bulletin_bulletingroup_send_to_telegram',
+            ),
         ]
         return custom_urls + urls
 
     def send_to_telegram_link(self, obj):
         if obj.status:
             return "✅ Yuborilgan"
-        url = reverse('admin:send_to_telegram', args=[obj.pk])
+        url = reverse(
+            'admin:bulletin_bulletingroup_send_to_telegram',
+            args=[obj.pk]
+        )
         return format_html('<a class="button" href="{}">Jonatish</a>', url)
 
     send_to_telegram_link.short_description = "Guruhga yuborish"
-    send_to_telegram_link.allow_tags = True
 
     def _send_to_telegram(self, request, group_id):
         group = BulletinGroup.objects.get(pk=group_id)
         result = send_bulletin_to_group(group)
-        self.message_user(request, f"{group.name.title()} uchun sorovnoma")
+
+        if result:
+            group.status = True
+            group.save(update_fields=["status"])
+
+        self.message_user(request, f"{group.name.title()} uchun so‘rovnoma yuborildi ✅")
         return redirect(request.META.get('HTTP_REFERER'))
 
+
+@admin.register(Bulletin)
+class BulletinAdmin(admin.ModelAdmin):
+    list_display = ['id', 'bulletin_group', 'title', 'specialization', "title"]

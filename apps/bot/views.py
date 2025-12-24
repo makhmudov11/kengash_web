@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
 from .models import TelegramUser
+from .serializers import BulletinVoteSerializer
 from ..bulletin.models import Bulletin
 from ..employee.models import Employee
 
@@ -26,7 +27,7 @@ class VerifyContactView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        tg_id = request.data.get('tg_id')
+        tg_id = request.data.get('telegram_id')
         phone_number = request.data.get('phone_number')
 
 
@@ -63,3 +64,28 @@ class VerifyContactView(APIView):
         }, status=200)
 
 
+
+class BulletinVoteCreateView(generics.CreateAPIView):
+    serializer_class = BulletinVoteSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def perform_create(self, serializer):
+        telegram_id = serializer.validated_data.pop('telegram_id')
+        # bulletin = serializer.validated_data['bulletin']
+
+        tg_user = get_object_or_404(TelegramUser, telegram_id=telegram_id)
+
+        if not tg_user.is_verified:
+            raise serializers.ValidationError("Kontakt bazadan topilmadi!")
+
+        if not tg_user.employee:
+            raise serializers.ValidationError("Foydalanuvchi bog'lanmagan.")
+
+        serializer.save(telegram_user=tg_user)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

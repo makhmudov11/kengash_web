@@ -37,7 +37,7 @@ class SendBulletinGroup(ListAPIView):
         group_id = self.kwargs.get('group_id')
         bulletin_obj = BulletinGroup.objects.filter(id=group_id)
         print("SLAOLSJAHKJSAFHKSABKGABKGHABIHBAIGHAB", bulletin_obj)
-        result = send_bulletin_to_group(group_id)  # Telegramga yuborish
+        result = send_bulletin_to_group(bulletin_obj)  # Telegramga yuborish
 
         data = {
             "telegram_result": result,

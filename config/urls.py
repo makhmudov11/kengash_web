@@ -23,6 +23,7 @@ from apps.swagger.swagger_urls import SPECTACULAR_URL
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/bot/', include('apps.bot.urls')),
     path('login/', include('apps.users.urls', namespace='users')),
     path('face/', include('apps.face.urls', namespace='face')),
     path('employee/', include('apps.employee.urls', namespace='employee')),

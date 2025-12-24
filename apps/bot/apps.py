@@ -1,10 +1,12 @@
+# apps/bot/apps.py
 from django.apps import AppConfig
 import threading
+import os
+import sys
 
 # Global singleton
 _bot_thread = None
 _bot_lock = threading.Lock()
-
 
 class BotConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
@@ -12,22 +14,21 @@ class BotConfig(AppConfig):
 
     def ready(self):
         # Faqat asosiy jarayonda ishga tushirish
-        # if self._is_main_process():
-        print("BotConfig ready() → Bot ishga tushmoqda (uvicorn)...")
-        self.start_bot_once()
+        if self._is_main_process():
+            print("BotConfig ready() → Bot ishga tushmoqda (uvicorn)...")
+            self.start_bot_once()
 
-    #
-    # def _is_main_process(self):
-    #     """uvicorn, gunicorn, hypercorn uchun moslashtirilgan"""
-    #     return (
-    #         # Development: uvicorn main process
-    #             'uvicorn' in sys.argv[0].lower() or
-    #             'hypercorn' in sys.argv[0].lower() or
-    #             # Production: gunicorn master
-    #             os.environ.get('RUN_MAIN') == 'true' or
-    #             # Django runserver
-    #             ('runserver' in sys.argv and 'test' not in sys.argv)
-    #     )
+    def _is_main_process(self):
+        """uvicorn, gunicorn, hypercorn uchun moslashtirilgan"""
+        return (
+            # Development: uvicorn main process
+            'uvicorn' in sys.argv[0].lower() or
+            'hypercorn' in sys.argv[0].lower() or
+            # Production: gunicorn master
+            os.environ.get('RUN_MAIN') == 'true' or
+            # Django runserver
+            ('runserver' in sys.argv and 'test' not in sys.argv)
+        )
 
     def start_bot_once(self):
         global _bot_thread
