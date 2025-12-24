@@ -1,9 +1,11 @@
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.employee.models import Employee
 from apps.face.models import Attendance, AttendanceChoice
-from apps.face.serializers import EmployeeFaceAttendanceSerializer
+from apps.face.serializers import EmployeeFaceAttendanceSerializer, EmployeeFaceAttendanceListSerializer
 
 from django.utils.dateparse import parse_datetime
 from rest_framework.views import APIView
@@ -60,3 +62,8 @@ class EmployeeFaceAttendanceAPIView(APIView):
             EmployeeFaceAttendanceSerializer(attendance).data,
             status=status.HTTP_201_CREATED
         )
+
+class EmployeeFaceAttendanceListAPIView(ListAPIView):
+    serializer_class = EmployeeFaceAttendanceListSerializer
+    permission_classes = [IsAdminUser]
+    queryset = Attendance.objects.select_related('employee')
