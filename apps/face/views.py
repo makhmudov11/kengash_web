@@ -32,17 +32,17 @@ class EmployeeFaceAttendanceAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        emp_id = event_data.get('employeeNoString')
-        if not emp_id:
+        hemis_id = event_data.get('employeeNoString')
+        if not hemis_id:
             return Response(
-                {"error": "Employee id  topilmadi"},
+                {"error": "Hemis id  topilmadi"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        employee = Employee.objects.filter(pk=emp_id).first()
+        employee = Employee.objects.filter(hemis_id=hemis_id).first()
         if not employee:
             return Response(
-                {"error": f"{emp_id} bo‘yicha employee topilmadi"},
+                {"error": f"{hemis_id} bo‘yicha employee topilmadi"},
                 status=status.HTTP_404_NOT_FOUND
             )
 
