@@ -29,6 +29,10 @@ class BulletinGroupSerializer(serializers.ModelSerializer):
 
 class BulletinLIstSerializer(serializers.ModelSerializer):
     bulletin_group = BulletinGroupSerializer()
+
+    def get_attendance_status(self, obj):
+        # Misol uchun: agar present bo‘lsa 'Present', aks holda 'Absent'
+        return "Present" if obj.is_present else "Absent"
     class Meta:
         model = Bulletin
         fields = ['id', 'full_name', 'bulletin_group', 'specialization', 'title']
